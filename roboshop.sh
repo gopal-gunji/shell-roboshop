@@ -33,6 +33,4 @@ do
         )
     fi
 
-    echo "IP address of $instance is $IP"
-
 done
