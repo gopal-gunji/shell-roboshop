@@ -45,8 +45,9 @@ if[ $? -ne 0 ]; then
 else
     echo -e "Roboshop user already created...$Y SKIPPING NOW $N"
 
+fi
 
-mkdir -p /app &>>$LOG_FILE
+mkdir -p /app 
 VALIDATE $? "creating /app directory"
 
 curl -o /tmp/catalogue.zip https://roboshop-artifacts.s3.amazonaws.com/catalogue-v3.zip &>>$LOG_FILE
