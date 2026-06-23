@@ -5,11 +5,7 @@ AMI_ID="ami-0220d79f3f480ecf5"
 ZONE_ID="Z07001291I5OKT2L6X235"
 DOMAIN_NAME="durgagopalakrishna.online"
 
-
-
-
-
-for instance in "$@"
+for instance in $@
 do
     echo "Creating EC2 instance for $instance"
     INSTANCE_ID=$( aws ec2 run-instances \
@@ -21,23 +17,14 @@ do
      --output text )
         echo "Instance ID of $instance is $INSTANCE_ID"
 
-    echo "Instance ID of $instance is $INSTANCE_ID"
-
-    aws ec2 wait instance-running --instance-ids $INSTANCE_ID
-    sleep 15
-    if [ -z "$IP" ]; then
-        echo "ERROR: IP not assigned yet for $instance"
-        exit 1
-    fi
     if [ $instance == "frontend" ]; then
         IP=$(
             aws ec2 describe-instances \
             --instance-ids $INSTANCE_ID \
             --query 'Reservations[].Instances[].PublicIpAddress' \
             --output text
-            
+            echo "IP address of $instance is $IP"
         )
-        echo "IP address of $instance is $IP"
         RECORD_NAME="$DOMAIN_NAME" # durgagopalakrishna.online
     else
         IP=$(
@@ -45,31 +32,36 @@ do
             --instance-ids $INSTANCE_ID \
             --query 'Reservations[].Instances[].PrivateIpAddress' \
             --output text
-            
+            echo "IP address of $instance is $IP"
 
         )
-        echo "IP address of $instance is $IP"
         RECORD_NAME="$instance.$DOMAIN_NAME" # mongodb.durgagopalakrishna.online
     fi
 
-    echo "IP Address $IP"
-   
-        aws route53 change-resource-record-sets \
-        --hosted-zone-id "$ZONE_ID" \
-        --change-batch "{
-        \"Comment\": \"Updating record\",
-        \"Changes\": [{
-            \"Action\": \"UPSERT\",
-            \"ResourceRecordSet\": {
-            \"Name\": \"$RECORD_NAME\",
-            \"Type\": \"A\",
-            \"TTL\": 1,
-            \"ResourceRecords\": [{
-                \"Value\": \"$IP\"
-            }]
-            }
-        }]
-        }" 
+    echo "IP address: $IP"
     
-    echo "Record created for $instance with IP $IP and record name $RECORD_NAME"
+    aws route53 change-resource-record-sets \
+    --hosted-zone-id $ZONE_ID\
+    --change-batch '
+    {
+        "Comment": "Updating record ",
+        "Changes": [
+            {
+            "Action": "UPSERT",
+            "ResourceRecordSet": {
+                "Name": "'$RECORD_NAME'",
+                "Type": "A",
+                "TTL": 1,
+                "ResourceRecords": [
+                {
+                    "Value": "'$IP'"
+                }
+                ]
+            }
+            }
+        ]
+    }  
+    '
+    echo "record updated for $instance"
+
 done
