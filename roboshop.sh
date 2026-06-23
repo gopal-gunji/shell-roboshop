@@ -8,7 +8,7 @@ do
 
     echo "creating instance for $instance"
 
-    instance_id=$( aws ec2 run-instances \
+    INSTANCE_ID=$( aws ec2 run-instances \
      --image-id $AMI_ID \
      --instance-type t3.micro \
      --security-group-ids $SG_ID \
@@ -20,18 +20,19 @@ do
     if [ $instance == "frontend" ]; then
         IP=$(
             aws ec2 describe-instsnces \
-            --instance-ids $instance_id \
+            --instance-ids $INSTANCE_ID \
             --query 'Reservations[].Instances[].PublicIpAddress' \
             --output text
         )
     else
         IP=$(
             aws ec2 describe-instsnces \
-            --instance-ids $instance_id \
+            --instance-ids $INSTANCE_ID \
             --query 'Reservations[].Instances[].PrivateIpAddress' \
             --output text
         )
     fi
 
+    echo "IP address of $instance is $IP"
 
 done
