@@ -17,7 +17,7 @@ if [ $USERID -ne 0 ]; then
     exit 1
 fi
 
-mkdir -p $LOG_FOLDER
+mkdir -p $LOGS_FOLDER
 
 VALIDATE(){
     if [ $1 -ne 0 ]; then
@@ -54,6 +54,9 @@ VALIDATE $? "downloading catalogue application content"
 
 cd /app
 VALIDATE $? "Moving to app directory "
+
+rm -rf /app/*
+VALIDATE $? "Removing existing code"
 
 unzip /tmp/catalogue.zip &>>$LOG_FILE
 VALIDATE $? "Unzip catalogue code"
