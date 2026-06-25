@@ -17,7 +17,7 @@ if [ $USERID -ne 0 ]; then
     exit 1
 fi
 
-mkdir -p $LOGS_FOLDER
+mkdir -p $LOG_FOLDER
 
 VALIDATE(){
     if [ $1 -ne 0 ]; then
@@ -37,7 +37,7 @@ VALIDATE $? "Enabling nodejs 20 version"
 dnf install nodejs -y &>>$LOG_FILE
 VALIDATE $? "installing nodejs"
 
-id roboshop  &>>$LOGS_FILE
+id roboshop  &>>$LOG_FILE
 if [ $? -ne 0 ]; then
 
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
