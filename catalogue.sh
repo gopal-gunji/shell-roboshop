@@ -8,6 +8,9 @@ G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
 SCRIPT_DIR=$PWD
+MONGODB_HOST=monodb.durgagopalakrishna.online
+
+
 if [ $USERID -ne 0 ]; then 
     echo -e "$R please run this script with root user access $N" | tee -a $LOG_FILE
     exit 1
@@ -67,3 +70,8 @@ systemctl daemon-reload
 systemctl enable catalogue &>>$LOG_FILE
 systemctl start catalogue &>>$LOG_FILE
 VALIDATE $? "Starting and enbling catalogue"
+
+cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo
+dnf install mongodb-mongosh -y
+
+mongosh --host $MONGODB_HOST <app/db/master-data.js
