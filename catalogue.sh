@@ -37,14 +37,14 @@ VALIDATE $? "Enabling nodejs 20 version"
 dnf install nodejs -y &>>$LOG_FILE
 VALIDATE $? "installing nodejs"
 
-id roboshop &>>$LOGS_FILE
-if[ $? -ne 0 ]; then 
+id roboshop  &>>$LOGS_FILE
+if [ $? -ne 0 ]; then
 
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
     VALIDATE $? "creating roboshop system user"
 else
     echo -e "Roboshop user already created...$Y SKIPPING NOW $N"
-
+fi
 
 mkdir -p /app &>>$LOG_FILE
 VALIDATE $? "creating /app directory"
@@ -55,16 +55,16 @@ VALIDATE $? "downloading catalogue application content"
 cd /app
 VALIDATE $? "Moving to app directory "
 
-unzip /tmp/catalogue.zip
+unzip /tmp/catalogue.zip &>>$LOG_FILE
 VALIDATE $? "Unzip catalogue code"
 
-npm install
+npm install &>>$LOG_FILE
 VALIDATE $? "Installing dependencies"
 
-cp catalogue.service /ect/systemmd/system/catalogue.service
+cp catalogue.service /etc/systemd/system/catalogue.service &>>$LOG_FILE 
 VALIDATE $? "Creating systemctl service "
 
 systemctl daemon-reload
-systemctl enable catalogue 
-systemctl start catalogue
+systemctl enable catalogue &>>$LOG_FILE
+systemctl start catalogue &>>$LOG_FILE
 VALIDATE $? "Starting and enbling catalogue"
