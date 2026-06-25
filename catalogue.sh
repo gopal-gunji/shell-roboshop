@@ -8,7 +8,7 @@ G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
 SCRIPT_DIR=$PWD
-MONGODB_HOST=monodb.durgagopalakrishna.online
+MONGODB_HOST=mongodb.durgagopalakrishna.online
 
 
 if [ $USERID -ne 0 ]; then 
@@ -74,4 +74,13 @@ VALIDATE $? "Starting and enbling catalogue"
 cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo
 dnf install mongodb-mongosh -y
 
-mongosh --host $MONGODB_HOST <app/db/master-data.js
+INDEX=$(mongosh --host $MONGODB_HOST --quiet --eval 'db.getMongo().getDBNames().indexof("catalogue")')
+if [$INDEX -le 0 ]:
+    mongosh --host $MONGODB_HOST <app/db/master-data.js
+    VALIDATE $? "Loading Products"
+else
+    echo -e "Products alredy loaded ---$Y SKIPPING $N"
+fi
+
+systemctl restart catalogue
+VALIDATE $? "Restarying catalogue"
