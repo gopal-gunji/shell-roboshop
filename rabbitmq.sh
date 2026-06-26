@@ -8,11 +8,10 @@ G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
 SCRIPT_DIR=$PWD
-MYSQL_HOST=mysql.durgagopalakrishna.online
+MYSQL_HOST=mysql.daws88s.online
 
-
-if [ $USERID -ne 0 ]; then 
-    echo -e "$R please run this script with root user access $N" | tee -a $LOG_FILE
+if [ $USERID -ne 0 ]; then
+    echo -e "$R Please run this script with root user access $N" | tee -a $LOGS_FILE
     exit 1
 fi
 
@@ -20,24 +19,23 @@ mkdir -p $LOGS_FOLDER
 
 VALIDATE(){
     if [ $1 -ne 0 ]; then
-        echo -e "$R $2 ....failed $N" | tee -a $LOGS_FILE
+        echo -e "$2 ... $R FAILURE $N" | tee -a $LOGS_FILE
         exit 1
     else
-        echo -e "$G $2 ....success $N" | tee -a $LOGS_FILE
+        echo -e "$2 ... $G SUCCESS $N" | tee -a $LOGS_FILE
     fi
 }
 
-
 cp $SCRIPT_DIR/rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo
-VALIDTE $? "Added rabbitmq repo"
+VALIDATE $? "Added RabbitMQ repo"
 
 dnf install rabbitmq-server -y &>>$LOGS_FILE
-VALIDATE $? "Installing rabbitmq server"
+VALIDATE $? "Installing RabbitMQ server"
 
-systemctl enable rabbitmq-server 
-systemctl start rabbitmq-server  &>>$LOGS_FILE
-VALIDATE $? "Enable and Starting RabbitMQ"
+systemctl enable rabbitmq-server &>>$LOGS_FILE
+systemctl start rabbitmq-server
+VALIDATE $? "Enabled and started rabbitmq"
 
-rabbitmqctl add_user roboshop roboshop123
-rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*"
-VAlIDATE $?
+rabbitmqctl add_user roboshop roboshop123 &>>$LOGS_FILE
+rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*" &>>$LOGS_FILE
+VALIDATE $? "created user and gien permissions"
