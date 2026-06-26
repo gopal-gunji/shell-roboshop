@@ -43,10 +43,12 @@ cd /usr/share/nginx/html
 unzip /tmp/frontend.zip &>>$LOGS_FILE
 VALIDATE $? "Downloaded and unzipped frontend"
 
-rm -rf /etc/nginx/nginx.conf
 
-cp $SCRIPT_DIR/nginx.conf /etc/nginx/nginx.conf
-VALIDATE $? "Copied our nginx conf file"
+rm -rf /etc/nginx/default.d/*
+VALIDATE $? "Removed old nginx config"
+
+cp $SCRIPT_DIR/nginx.conf /etc/nginx/default.d/roboshop.conf
+VALIDATE $? "Copied nginx config"
 
 systemctl restart nginx
 VALIDATE $? "Restarted Nginx"
