@@ -74,12 +74,12 @@ VALIDATE $? "Starting and enbling catalogue"
 cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo
 dnf install mongodb-mongosh -y
 
-INDEX=$(mongosh --host $MONGODB_HOST --quiet --eval 'db.getMongo().getDBNames().indexof("catalogue")')
-if [ $INDEX -le 0 ]; then
+INDEX=$(mongosh --host $MONGODB_HOST --quiet --eval 'db.getMongo().getDBNames().indexOf("catalogue")')
+if [ "$INDEX" -lt 0 ]; then
     mongosh --host $MONGODB_HOST </app/db/master-data.js
     VALIDATE $? "Loading Products"
 else
-    echo -e "Products alredy loaded ---$Y SKIPPING $N"
+    echo -e "Products already loaded...${Y}SKIPPING${N}"
 fi
 
 systemctl restart catalogue &>>$LOG_FILE
