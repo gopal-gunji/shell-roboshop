@@ -40,9 +40,9 @@ VALIDATE $? "Enable and Start Nginx"
 rm -rf /usr/share/nginx/html/* 
 VALIDATE $? "Remove default or old code"
 
-curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip
+curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip &>>$LOG_FILE
 cd /usr/share/nginx/html 
-unzip /tmp/frontend.zip
+unzip /tmp/frontend.zip &>>$LOG_FILE
 VALIDATE $? "Download and unzip frontend"
 
 rm -rf /etc/nginx/nginx.conf
@@ -51,5 +51,5 @@ VALIDATE $? "Removem old data"
 cp $SCRIPT_DIR/nginx.conf /etc/nginx/nginx.conf
 VALIDATE $? "Copied our nginx conf file
 
-systemctl restart nginx 
+systemctl restart nginx  &>>$LOG_FILE
 VALIDATE $? "Restart Nginx"
