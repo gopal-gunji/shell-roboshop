@@ -27,6 +27,7 @@ VALIDATE(){
     fi
 }
 
+
 cp $SCRIPT_DIR/rabbitmq.repo /etc/yum.repos.d/rabbitmq.repo
 VALIDTE $? "Added rabbitmq repo"
 
