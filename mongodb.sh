@@ -1,21 +1,15 @@
 #!/bin/bash
 
-
-
 USERID=$(id -u)
 LOGS_FOLDER="/var/log/shell-roboshop"
-LOG_FILE="$LOGS_FOLDER/$0.log"
+LOGS_FILE="$LOGS_FOLDER/$0.log"
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
-B="\e[34m"
-M="\e[35m"
-C="\e[36m"
-W="\e[37m"
 N="\e[0m"
 
-if [ $USERID -ne 0 ]; then 
-    echo -e "$R please run this script with root user access $N" | tee -a $LOG_FILE
+if [ $USERID -ne 0 ]; then
+    echo -e "$R Please run this script with root user access $N" | tee -a $LOGS_FILE
     exit 1
 fi
 
@@ -23,28 +17,27 @@ mkdir -p $LOGS_FOLDER
 
 VALIDATE(){
     if [ $1 -ne 0 ]; then
-        echo -e "$R $2 ....failed $N" | tee -a $LOG_FILE
+        echo -e "$2 ... $R FAILURE $N" | tee -a $LOGS_FILE
         exit 1
     else
-        echo -e "$G $2 ....success $N" | tee -a $LOG_FILE
+        echo -e "$2 ... $G SUCCESS $N" | tee -a $LOGS_FILE
     fi
 }
 
-cp mongo.repo /etc/yum.repos.d/mongo.repo &>>$LOG_FILE
-VALIDATE $? "copying mongo.repo file"
+cp mongo.repo /etc/yum.repos.d/mongo.repo
+VALIDATE $? "Copying Mongo Repo" 
 
-dnf install mongodb-org -y &>>$LOG_FILE
-VALIDATE $? "installing mongodb SERVER"
+dnf install mongodb-org -y &>>$LOGS_FILE
+VALIDATE $? "Installing MongoDB server"
 
-systemctl enable mongod &>>$LOG_FILE
-VALIDATE $? "enabling mongodb service"
+systemctl enable mongod &>>$LOGS_FILE
+VALIDATE $? "Enable MongoDB"
 
-systemctl start mongod 
-VALIDATE $? "starting mongodb service"
+systemctl start mongod
+VALIDATE $? "Start MongoDB"
 
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
-VALIDATE $? "updating mongodb config file allowing remote connections"
-
+VALIDATE $? "Allowing remote connections"
 
 systemctl restart mongod
-VALIDATE $? "restarted mongodb service"
+VALIDATE $? "Restarted MongoDB"
