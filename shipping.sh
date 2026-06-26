@@ -9,7 +9,7 @@ Y="\e[33m"
 N="\e[0m"
 SCRIPT_DIR=$PWD
 MONGODB_HOST=mongodb.durgagopalakrishna.online
-$MYSQL_HOST=mysql.durgagopalakrishna.online
+MYSQL_HOST=mysql.durgagopalakrishna.online
 
 
 if [ $USERID -ne 0 ]; then 
